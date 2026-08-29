@@ -1,3 +1,10 @@
+class BcgaError(Exception):
+    """
+    An error worth showing to the user in the Blender interface rather than as
+    a Python traceback in the console.
+    """
+
+
 import mathutils
 
 from pro import context

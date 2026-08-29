@@ -3,10 +3,28 @@ from pro import context
 from pro import x, y
 from pro import front, back, left, right, top, bottom, side, all
 from pro.op_split import calculateSplit
-from .util import rotation_zNormal_xHorizontal, getEndVertex, unityThreshold, zAxis
+from .util import rotation_zNormal_xHorizontal, getEndVertex, unityThreshold, zAxis, BcgaError
 
 # normal threshold for the Shape3d.comp method to classify if the face is horizontal or vertical
 horizontalFaceThreshold = 0.70711 # math.sqrt(0.5)
+
+
+def getUVlayer(bm, layer):
+    """
+    Returns the bmesh UV layer with the given name.
+
+    The layer cannot be created here: doing so reallocates the loop data and
+    invalidates every BMLoop the shapes are holding. bpro.getUVlayerNames reads
+    the names out of the rule file beforehand instead.
+    """
+    uvLayer = bm.loops.layers.uv.get(layer)
+    if uvLayer is None:
+        raise BcgaError(
+            "The uv layer '%s' does not exist. BCGA collects uv layer names "
+            "before building, from the layer= argument of texture(..) calls in "
+            "the rule file, so that name has to appear there as a plain string."
+            % layer)
+    return uvLayer
 
 
 def getInitialShape(bm):
@@ -233,7 +251,7 @@ class Shape2d:
         width = tex.width
         # texture height in the units of global coordinate sytem
         height = tex.height
-        uvLayer = context.bm.loops.layers.uv[layer]
+        uvLayer = getUVlayer(context.bm, layer)
         # getting the transformation matrix from the global coordinate system to the shape coordinate system
         matrix = self.getMatrix()
         firstLoop = self.firstLoop
@@ -362,7 +380,7 @@ class Rectangle(Shape2d):
             # Assign uv coordinates for each uvLayer and for each newly cut shape
             # The uv coordinates are inherited from the parent shape
             for layer in self.uvLayers:
-                uvLayer = bm.loops.layers.uv[layer]
+                uvLayer = getUVlayer(bm, layer)
                 
                 # origin for the uv space
                 origin = firstLoop[uvLayer].uv
@@ -407,7 +425,7 @@ class Rectangle(Shape2d):
         width = tex.width
         # texture height in the units of global coordinate sytem
         height = tex.height
-        uvLayer = context.bm.loops.layers.uv[layer]
+        uvLayer = getUVlayer(context.bm, layer)
         loop = self.firstLoop
         if width==0 or height==0:
             # treat the special case
@@ -448,7 +466,7 @@ class Rectangle(Shape2d):
             """A helper function for material inheritance"""
             loops = shape.face.loops
             for layer in self.uvLayers:
-                uvLayer = bm.loops.layers.uv[layer]
+                uvLayer = getUVlayer(bm, layer)
                 uv1 = loop1[uvLayer].uv
                 uv2 = loop2[uvLayer].uv
                 # shape width

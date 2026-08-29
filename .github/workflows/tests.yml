@@ -1,0 +1,37 @@
+name: tests
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  # Blender releases are the thing most likely to break this add-on, and they
+  # arrive on their own schedule, so also check once a week.
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+jobs:
+  blender:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # the bpy wheel pins the Python version it was built against
+          - bpy: "4.2.0"
+            python: "3.11"
+    name: Blender ${{ matrix.bpy }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install bpy
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "bpy==${{ matrix.bpy }}"
+
+      - name: Run the test suite
+        run: python tests/test_bcga.py

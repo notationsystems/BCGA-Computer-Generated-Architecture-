@@ -1,3 +1,4 @@
+import ast
 import importlib.util
 import os
 import inspect
@@ -8,7 +9,7 @@ from pro import context
 
 from .material import MaterialManager
 
-from .util import VertexRegistry
+from .util import VertexRegistry, BcgaError
 
 from .op_decompose import Decompose
 from .op_split import Split
@@ -52,6 +53,31 @@ def buildFactory():
     factory["Translate"] = Translate
 
 
+def getUVlayerNames(path):
+    """
+    Returns the uv layer names a rule file asks for through the layer= argument
+    of texture(..).
+
+    The layers have to exist before the bmesh is built: adding one later
+    reallocates the loop data, which invalidates every BMLoop reference the
+    shapes are holding, so they cannot be created on demand while rules run.
+    """
+    names = set()
+    try:
+        with open(path, encoding="utf-8") as ruleSource:
+            tree = ast.parse(ruleSource.read(), path)
+    except (OSError, SyntaxError):
+        # a rule file that cannot be read or parsed fails loudly when imported
+        return names
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call):
+            for keyword in node.keywords:
+                if keyword.arg == "layer" and isinstance(keyword.value, ast.Constant) \
+                        and isinstance(keyword.value.value, str):
+                    names.add(keyword.value.value)
+    return names
+
+
 def apply(ruleFile, startRule="Begin"):
     from .bl_util import create_rectangle
 
@@ -60,12 +86,16 @@ def apply(ruleFile, startRule="Begin"):
     if obj:
         bpy.ops.object.mode_set(mode="OBJECT")
 
-    noMeshCondition = not obj or obj.type != "MESH"
-    if noMeshCondition or len(obj.data.polygons) != 1:
-        if not noMeshCondition:
-            # delete if it's non-flat mesh
-            bpy.ops.object.delete()
+    if not obj or obj.type != "MESH":
+        # nothing usable is selected, so start from a default footprint
         create_rectangle(blenderContext, 20, 10)
+    elif len(obj.data.polygons) != 1:
+        # Any single face works as a footprint, including an n-gon. Anything
+        # else is someone's model: report it rather than deleting their work.
+        raise BcgaError(
+            "BCGA builds on a footprint of exactly one face, but '%s' has %d. "
+            "Press Footprint to create one, or select a single-face polygon."
+            % (obj.name, len(obj.data.polygons)))
     # apply all transformations to the active Blender object
     bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
     # setting the path to the rule for context
@@ -73,9 +103,11 @@ def apply(ruleFile, startRule="Begin"):
         ruleFile, str) else ruleFile.__file__
     params = None
     mesh = blenderContext.object.data
-    # create a uv layer for the mesh
-    # TODO: a separate pass through the rules is needed to find out how many uv layers are needed
-    mesh.uv_layers.new(name=Texture.defaultLayer)
+    # Give the mesh its default uv layer plus every layer the rule set names,
+    # all before the bmesh is built (see getUVlayerNames for why).
+    for layerName in [Texture.defaultLayer] + sorted(getUVlayerNames(context.ruleFile)):
+        if layerName not in mesh.uv_layers:
+            mesh.uv_layers.new(name=layerName)
     # initialize the context
     context.init()
     # initializing bmesh instance
