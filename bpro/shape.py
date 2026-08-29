@@ -191,7 +191,7 @@ class Shape2d:
             # inversed rotation matrix:
             rotationMatrix = rotation_zNormal_xHorizontal(self.firstLoop, self.getNormal())
             # remember inversed(TRS) = inversed(S)*inversed(R)*inversed(T), so in our case:
-            self.matrix = rotationMatrix*translationMatrix
+            self.matrix = rotationMatrix @ translationMatrix
         return self.matrix
     
     def getNormal(self):
@@ -244,7 +244,7 @@ class Shape2d:
         # iterate through all loops of the face
         loop = firstLoop
         while True:
-            uv = (matrix*loop.vert.co)[:2]
+            uv = (matrix @ loop.vert.co)[:2]
             # assign uv
             loop[uvLayer].uv = (uv[0]/width, uv[1]/height)
             loop = loop.link_loop_next
@@ -267,7 +267,7 @@ class Shape2d:
         # iterate through all loops of the face
         loop = firstLoop
         while True:
-            uv = matrix*loop.vert.co
+            uv = matrix @ loop.vert.co
             uCoords.append(uv[0])
             vCoords.append(uv[1])
             loop = loop.link_loop_next
@@ -494,7 +494,7 @@ class Rectangle(Shape2d):
         prevVert2 = prevVert2.vert
         height = (prevVert2.co-prevVert1.co).length
         # matrix is a reverse one to the matrix returned by self.getMatrix
-        matrix = mathutils.Matrix.Translation(self.origin) * rotation_zNormal_xHorizontal(firstLoop, self.getNormal(), True)
+        matrix = mathutils.Matrix.Translation(self.origin) @ rotation_zNormal_xHorizontal(firstLoop, self.getNormal(), True)
         
         materialIndex = self.face.material_index
         
@@ -532,10 +532,10 @@ class Rectangle(Shape2d):
                 y1 = coord
                 y2 = coord
             # vert1
-            vert1 = matrix*mathutils.Vector((x1, y1, depth))
+            vert1 = matrix @ mathutils.Vector((x1, y1, depth))
             vert1 = bm.verts.new(vert1)
             # vert2
-            vert2 = matrix*mathutils.Vector((x2, y2, depth))
+            vert2 = matrix @ mathutils.Vector((x2, y2, depth))
             vert2 = bm.verts.new(vert2)
             if axis==x:
                 verts = (prevVert1, vert1, vert2, prevVert2) if not defs.flipNormal else (vert1, prevVert1, prevVert2, vert2)

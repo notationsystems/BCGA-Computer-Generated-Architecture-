@@ -59,7 +59,9 @@ class Operator:
 			setattr(operator, value.modifier, True)
 			operator.value = value.value
 			if wrapper:
-				wrapper.modifier = value.modifier
+				# `wrapper` is the flag; the modifier belongs on the
+				# RrshiftOperator, which is what `operator` refers to here
+				operator.modifier = value.modifier
 		elif isinstance(value, Param):
 			operator.value = value.value
 		else:

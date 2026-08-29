@@ -1,4 +1,4 @@
-import imp
+import importlib.util
 import os
 import inspect
 import bpy
@@ -145,10 +145,14 @@ def getModule(ruleFile):
     # remove extension from ruleFile if it was provided
     ruleFile = os.path.splitext(ruleFile)[0]
     moduleName = os.path.basename(ruleFile)
-    _file, _pathname, _description = imp.find_module(
-        moduleName, [os.path.dirname(ruleFile)])
-    module = imp.load_module(moduleName, _file, _pathname, _description)
-    _file.close()
+    path = ruleFile + ".py"
+    # the rule file is loaded straight from its path and deliberately not cached in
+    # sys.modules, so that editing a rule set and pressing Apply again re-reads it
+    spec = importlib.util.spec_from_file_location(moduleName, path)
+    if spec is None or spec.loader is None:
+        raise ImportError("Cannot load the BCGA rule file '%s'" % path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
     return module
 
 

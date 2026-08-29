@@ -11,4 +11,4 @@ class Translate(pro.op_translate.Translate):
         if not isinstance(shape, Shape2d): return
         # rotation matrix, note True as the third parameter to rotation_zNormal_xHorizontal(..)
         matrix = rotation_zNormal_xHorizontal(shape.firstLoop, shape.getNormal(), True)
-        bmesh.ops.translate(context.bm, verts=shape.face.verts, vec=matrix * mathutils.Vector(self.vec))
+        bmesh.ops.translate(context.bm, verts=shape.face.verts, vec=matrix @ mathutils.Vector(self.vec))

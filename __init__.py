@@ -6,11 +6,11 @@ bl_info = {
 	"name": "BCGA",
 	"author": "Vladimir Elistratov <vladimir.elistratov@gmail.com>",
 	"version": (1, 0, 0),
-	"blender": (2, 80, 0),
+	"blender": (4, 2, 0),
 	"location": "View3D > Tool Shelf",
 	"description": "BCGA: Computer Generated Architecture for Blender",
 	"warning": "",
-	"wiki_url": "https://github.com/vvoovv/bcga/wiki",
+	"doc_url": "https://github.com/vvoovv/bcga/wiki",
 	"tracker_url": "https://github.com/vvoovv/bcga/issues",
 	"support": "COMMUNITY",
 	"category": "BCGA",
@@ -36,28 +36,29 @@ from pro.base import ParamFloat, ParamColor
 from bpro.bl_util import create_rectangle, align_view, first_edge_ymin
 
 
-def getRuleFile(ruleFile, operator):
+def getRuleFile(textName, operator, label="Script"):
 	"""
-	Returns full path to a BCGA script or None if it does not exist.
+	Returns the full path to the BCGA script held by the named text datablock,
+	or None if it cannot be used (the reason is reported to the operator).
 	"""
-	if len(ruleFile)>1 and ruleFile[:2]=="//":
-		ruleFile = ruleFile[2:]
-	ruleFile = os.path.join(os.path.dirname(bpy.data.filepath), ruleFile)
+	if not textName:
+		operator.report({"ERROR"}, "Select a BCGA script in the '%s' field first" % label)
+		return None
+	text = bpy.data.texts.get(textName)
+	if text is None:
+		operator.report({"ERROR"}, "The BCGA script '%s' is not open in Blender" % textName)
+		return None
+	if not text.filepath:
+		# a rule set typed into the text editor has never been written to disk,
+		# and BCGA can only import it as a module from a real file
+		operator.report({"ERROR"}, "Save the BCGA script '%s' to a file first" % textName)
+		return None
+	ruleFile = os.path.realpath(os.path.expanduser(bpy.path.abspath(text.filepath)))
 	if not os.path.isfile(ruleFile):
-		operator.report({"ERROR"}, "The BCGA script '%s' not found" % ruleFile)
-		ruleFile = None
+		operator.report({"ERROR"}, "The BCGA script '%s' was not found" % ruleFile)
+		return None
 	return ruleFile
 	
-bpy.types.Scene.bcgaScript = bpy.props.StringProperty(
-	name = "Script",
-	description = "Path to a BCGA script",
-)
-
-bpy.types.Scene.bakingBcgaScript = bpy.props.StringProperty(
-	name = "Low poly script",
-	description = "Path to a BCGA script with a low poly model",
-)
-
 class CustomFloatProperty(bpy.types.PropertyGroup):
 	"""A bpy.types.PropertyGroup descendant for bpy.props.CollectionProperty"""
 	value: bpy.props.FloatProperty(name="")
@@ -129,7 +130,7 @@ class Pro(bpy.types.Operator):
 	def invoke(self, context, event):
 		self.initialize()
 		proContext.blenderContext = context
-		ruleFile = bpy.data.texts[context.scene.bcgaScript].filepath
+		ruleFile = getRuleFile(context.scene.bcgaScript, self)
 		if ruleFile:
 			# append the directory of the ruleFile to sys.path
 			ruleFileDirectory = os.path.dirname(os.path.realpath(os.path.expanduser(ruleFile)))
@@ -155,9 +156,14 @@ class Pro(bpy.types.Operator):
 					numColors += 1
 				collectionItem.value = param.getValue()
 				param.collectionItem = collectionItem
+		else:
+			return {"CANCELLED"}
 		return {"FINISHED"}
 	
 	def execute(self, context):
+		if not hasattr(self, "params"):
+			# invoke() bailed out, so there is nothing to re-apply
+			return {"CANCELLED"}
 		proContext.blenderContext = context
 		for param in self.params:
 			param = param[1]
@@ -190,61 +196,80 @@ class Bake(bpy.types.Operator):
 
 	def execute(self, context):
 		proContext.blenderContext = context
+		lowPolyObject = context.object
+		if not lowPolyObject or lowPolyObject.type != "MESH":
+			self.report({"ERROR"}, "Select the BCGA mesh to bake onto")
+			return {"CANCELLED"}
+		# resolve both rule files before anything is duplicated, so that a missing
+		# script cannot leave a stray high poly object behind
+		highPolyRuleFile = getRuleFile(context.scene.bcgaScript, self, "Script")
+		lowPolyRuleFile = getRuleFile(context.scene.bakingBcgaScript, self, "Low poly script")
+		if not highPolyRuleFile or not lowPolyRuleFile:
+			return {"CANCELLED"}
 		bpy.ops.object.select_all(action="DESELECT")
 		# remember the original object, it will be used for low poly model
-		lowPolyObject = context.object
 		lowPolyObject.select_set(True)
 		bpy.ops.object.duplicate()
 		highPolyObject = context.object
 		# high poly model
-		ruleFile = bpy.data.texts[context.scene.bcgaScript].filepath
-		if ruleFile:
-			highPolyParams = bpro.apply(ruleFile)[1]
-			# convert highPolyParams to a dict paramName->instanceofParamClass
-			highPolyParams = dict(highPolyParams)
-			
-			# low poly model
-			context.view_layer.objects.active = lowPolyObject
-			ruleFile = bpy.data.texts[context.scene.bakingBcgaScript].filepath
-			if ruleFile:
-				name = lowPolyObject.name
-				module = bpro.getModule(ruleFile)
-				lowPolyParams = bpro.getParams(module)
-				# Apply highPolyParams to lowPolyParams
-				# Normally lowPolyParams is a subset of highPolyParams
-				for paramName,param in lowPolyParams:
-					if paramName in highPolyParams:
-						param.setValue(highPolyParams[paramName].getValue())
-				bpro.apply(module)
-				# unwrap the low poly model
-				bpy.ops.object.mode_set(mode="EDIT")
-				bpy.ops.mesh.select_all(action="SELECT")
-				bpy.ops.uv.smart_project()
-				# prepare settings for baking
-				bpy.ops.object.mode_set(mode="OBJECT")
-				highPolyObject.select_set(True)
-				bpy.context.scene.cycles.bake_type = "DIFFUSE"
-				bpy.context.scene.cycles.use_bake_selected_to_active = True
-				# create a new image with default settings for baking
-				image = bpy.data.images.new(name=name, width=512, height=512)
-				# finally perform baking
-				bpy.ops.object.bake_image()
-				# delete the high poly object and its mesh
-				context.view_layer.objects.active = highPolyObject
-				mesh = highPolyObject.data
-				bpy.ops.object.delete()
-				bpy.data.meshes.remove(mesh)
-				context.view_layer.objects.active = lowPolyObject
-				# assign the baked texture to the low poly object
-				blenderTexture = bpy.data.textures.new(name, type = "IMAGE")
-				blenderTexture.image = image
-				blenderTexture.use_alpha = True
-				material = bpy.data.materials.new(name)
-				# textureSlot = material.texture_slots.add()
-				# textureSlot.texture = blenderTexture
-				# textureSlot.texture_coords = "UV"
-				# textureSlot.uv_layer = "bcga"
-				lowPolyObject.data.materials.append(material)
+		# convert highPolyParams to a dict paramName->instanceofParamClass
+		highPolyParams = dict(bpro.apply(highPolyRuleFile)[1])
+
+		# low poly model
+		context.view_layer.objects.active = lowPolyObject
+		name = lowPolyObject.name
+		module = bpro.getModule(lowPolyRuleFile)
+		lowPolyParams = bpro.getParams(module)
+		# Apply highPolyParams to lowPolyParams
+		# Normally lowPolyParams is a subset of highPolyParams
+		for paramName,param in lowPolyParams:
+			if paramName in highPolyParams:
+				param.setValue(highPolyParams[paramName].getValue())
+		bpro.apply(module)
+		# unwrap the low poly model
+		bpy.ops.object.mode_set(mode="EDIT")
+		bpy.ops.mesh.select_all(action="SELECT")
+		bpy.ops.uv.smart_project()
+		bpy.ops.object.mode_set(mode="OBJECT")
+		# create a new image with default settings for baking
+		image = bpy.data.images.new(name=name, width=512, height=512)
+		# The bake is written into the active image texture node of the target
+		# object's material, so that material has to exist beforehand.
+		material = bpy.data.materials.new(name)
+		material.use_nodes = True
+		nodes = material.node_tree.nodes
+		textureNode = nodes.new("ShaderNodeTexImage")
+		textureNode.image = image
+		textureNode.location = -300, 300
+		nodes.active = textureNode
+		# The bake is written per face, through the material that face uses, so the
+		# many materials of the generated low poly model are replaced by the single
+		# baked one -- which is the point of baking in the first place.
+		lowPolyMesh = lowPolyObject.data
+		lowPolyMesh.materials.clear()
+		lowPolyMesh.materials.append(material)
+		for polygon in lowPolyMesh.polygons:
+			polygon.material_index = 0
+		# prepare settings for baking
+		highPolyObject.select_set(True)
+		lowPolyObject.select_set(True)
+		context.view_layer.objects.active = lowPolyObject
+		bakeSettings = context.scene.render.bake
+		bakeSettings.use_selected_to_active = True
+		# bake the plain surface colour, without lighting contributions
+		bakeSettings.use_pass_direct = False
+		bakeSettings.use_pass_indirect = False
+		bakeSettings.use_pass_color = True
+		# finally perform baking
+		bpy.ops.object.bake(type="DIFFUSE")
+		# delete the high poly object and its mesh
+		bpy.ops.object.select_all(action="DESELECT")
+		highPolyObject.select_set(True)
+		context.view_layer.objects.active = highPolyObject
+		mesh = highPolyObject.data
+		bpy.ops.object.delete()
+		bpy.data.meshes.remove(mesh)
+		context.view_layer.objects.active = lowPolyObject
 		return {"FINISHED"}
 
 
@@ -315,4 +340,22 @@ classes = (
 	BakingPanel,
 	FirstEdgePanel
 )
-register, unregister = bpy.utils.register_classes_factory(classes)
+_registerClasses, _unregisterClasses = bpy.utils.register_classes_factory(classes)
+
+
+def register():
+	_registerClasses()
+	bpy.types.Scene.bcgaScript = bpy.props.StringProperty(
+		name = "Script",
+		description = "Path to a BCGA script",
+	)
+	bpy.types.Scene.bakingBcgaScript = bpy.props.StringProperty(
+		name = "Low poly script",
+		description = "Path to a BCGA script with a low poly model",
+	)
+
+
+def unregister():
+	del bpy.types.Scene.bakingBcgaScript
+	del bpy.types.Scene.bcgaScript
+	_unregisterClasses()

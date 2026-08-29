@@ -21,10 +21,10 @@ class Rectangle(pro.op_rectangle.Rectangle):
         # rotation matrix
         matrix = rotation_zNormal_xHorizontal(shape.firstLoop, shape.getNormal())
         shape = createRectangle((
-            bm.verts.new( (-xVec - yVec)*matrix + origin),
-            bm.verts.new( ( xVec - yVec)*matrix + origin),
-            bm.verts.new( ( xVec + yVec)*matrix + origin),
-            bm.verts.new( (-xVec + yVec)*matrix + origin)
+            bm.verts.new( (-xVec - yVec) @ matrix + origin),
+            bm.verts.new( ( xVec - yVec) @ matrix + origin),
+            bm.verts.new( ( xVec + yVec) @ matrix + origin),
+            bm.verts.new( (-xVec + yVec) @ matrix + origin)
         ))
         if self.operator:
             context.pushState(shape=shape)
