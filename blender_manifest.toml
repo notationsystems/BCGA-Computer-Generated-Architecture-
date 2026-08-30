@@ -1,0 +1,18 @@
+schema_version = "1.0.0"
+
+id = "bcga"
+name = "BCGA"
+version = "1.0.0"
+tagline = "Computer generated architecture: build models from rule sets"
+maintainer = "Vladimir Elistratov <vladimir.elistratov@gmail.com>"
+
+type = "add-on"
+website = "https://github.com/vvoovv/bcga/wiki"
+
+tags = ["Add Mesh", "Modeling"]
+
+blender_version_min = "4.2.0"
+
+license = [
+  "SPDX:GPL-3.0-or-later",
+]
