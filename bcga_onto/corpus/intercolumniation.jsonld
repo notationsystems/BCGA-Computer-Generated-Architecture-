@@ -1,0 +1,100 @@
+{
+  "@context": {
+    "bcga": "https://notationsystems.github.io/bcga/ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "dcterms": "http://purl.org/dc/terms/"
+  },
+  "@graph": [
+    {
+      "@id": "bcga:Intercolumniation",
+      "@type": "rdfs:Class",
+      "rdfs:label": "Intercolumniation",
+      "rdfs:comment": "A named column spacing, measured as the clear space between shafts in M. Vitruvius makes column height a function of spacing as well as of order: the wider the bay, the stouter the column must look."
+    },
+
+    {
+      "@id": "bcga:pycnostyle",
+      "@type": "bcga:Intercolumniation",
+      "rdfs:label": "Pycnostyle",
+      "bcga:clearSpace": 1.5,
+      "bcga:correctedColumnHeight": 10,
+      "rdfs:comment": "Crowded.",
+      "dcterms:source": { "@id": "bcga:Vitruvius-III.3" }
+    },
+    {
+      "@id": "bcga:systyle",
+      "@type": "bcga:Intercolumniation",
+      "rdfs:label": "Systyle",
+      "bcga:clearSpace": 2,
+      "bcga:correctedColumnHeight": 9.5,
+      "rdfs:comment": "Still tight.",
+      "dcterms:source": { "@id": "bcga:Vitruvius-III.3" }
+    },
+    {
+      "@id": "bcga:eustyle",
+      "@type": "bcga:Intercolumniation",
+      "rdfs:label": "Eustyle",
+      "bcga:clearSpace": 2.25,
+      "bcga:centreClearSpace": 3,
+      "bcga:correctedColumnHeight": 9.5,
+      "bcga:preferred": true,
+      "rdfs:comment": "Vitruvius' preferred spacing, with the centre bay widened to 3 M so the entrance is marked without breaking the rhythm. Eustyle is the answer unless there is a reason otherwise.",
+      "dcterms:source": { "@id": "bcga:Vitruvius-III.3" }
+    },
+    {
+      "@id": "bcga:diastyle",
+      "@type": "bcga:Intercolumniation",
+      "rdfs:label": "Diastyle",
+      "bcga:clearSpace": 3,
+      "bcga:correctedColumnHeight": 8.5,
+      "rdfs:comment": "Wide; architraves begin to fail.",
+      "dcterms:source": { "@id": "bcga:Vitruvius-III.3" }
+    },
+    {
+      "@id": "bcga:araeostyle",
+      "@type": "bcga:Intercolumniation",
+      "rdfs:label": "Araeostyle",
+      "bcga:clearSpace": 3.5,
+      "bcga:correctedColumnHeight": 8,
+      "bcga:requiresTimberArchitrave": true,
+      "rdfs:comment": "Too wide for stone; requires timber architraves, and Tuscan only.",
+      "dcterms:source": { "@id": "bcga:Vitruvius-III.3" }
+    },
+
+    {
+      "@id": "bcga:tetrastyle",
+      "@type": "bcga:Portico",
+      "rdfs:label": "Tetrastyle",
+      "bcga:columns": 4,
+      "dcterms:source": { "@id": "bcga:Vitruvius-III.3" }
+    },
+    {
+      "@id": "bcga:hexastyle",
+      "@type": "bcga:Portico",
+      "rdfs:label": "Hexastyle",
+      "bcga:columns": 6,
+      "dcterms:source": { "@id": "bcga:Vitruvius-III.3" }
+    },
+    {
+      "@id": "bcga:octastyle",
+      "@type": "bcga:Portico",
+      "rdfs:label": "Octastyle",
+      "bcga:columns": 8,
+      "dcterms:source": { "@id": "bcga:Vitruvius-III.3" }
+    },
+    {
+      "@id": "bcga:decastyle",
+      "@type": "bcga:Portico",
+      "rdfs:label": "Decastyle",
+      "bcga:columns": 10,
+      "dcterms:source": { "@id": "bcga:Vitruvius-III.3" }
+    },
+    {
+      "@id": "bcga:evenFrontRule",
+      "@type": "bcga:Rule",
+      "rdfs:label": "Even-numbered fronts",
+      "rdfs:comment": "Fronts are always even-numbered, so that no column blocks the axis.",
+      "dcterms:source": { "@id": "bcga:Vitruvius-III.3" }
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "@context": {
+    "bcga": "https://notationsystems.github.io/bcga/ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "dcterms": "http://purl.org/dc/terms/"
+  },
+  "@graph": [
+    {
+      "@id": "bcga:Vitruvius",
+      "@type": "bcga:Author",
+      "rdfs:label": "Vitruvius",
+      "rdfs:comment": "Marcus Vitruvius Pollio, De architectura, c. 30-15 BC; the only complete architectural treatise to survive antiquity."
+    },
+    {
+      "@id": "bcga:Palladio",
+      "@type": "bcga:Author",
+      "rdfs:label": "Andrea Palladio",
+      "rdfs:comment": "I quattro libri dell'architettura, Venice 1570; the Renaissance codification that made the canon buildable."
+    },
+
+    {
+      "@id": "bcga:Vitruvius-I.2",
+      "@type": "bcga:Citation",
+      "rdfs:label": "Vitruvius, De architectura I.2",
+      "bcga:author": { "@id": "bcga:Vitruvius" },
+      "bcga:work": "De architectura",
+      "bcga:locator": "I.2",
+      "rdfs:comment": "The six principles, and the assignment of orders by character."
+    },
+    {
+      "@id": "bcga:Vitruvius-I.3",
+      "@type": "bcga:Citation",
+      "rdfs:label": "Vitruvius, De architectura I.3",
+      "bcga:author": { "@id": "bcga:Vitruvius" },
+      "bcga:work": "De architectura",
+      "bcga:locator": "I.3",
+      "rdfs:comment": "Firmitas, utilitas, venustas."
+    },
+    {
+      "@id": "bcga:Vitruvius-III.3",
+      "@type": "bcga:Citation",
+      "rdfs:label": "Vitruvius, De architectura III.3",
+      "bcga:author": { "@id": "bcga:Vitruvius" },
+      "bcga:work": "De architectura",
+      "bcga:locator": "III.3",
+      "rdfs:comment": "Intercolumniation, the slenderness correction, shaft diminution and the optical corrections."
+    },
+    {
+      "@id": "bcga:Vitruvius-III.5",
+      "@type": "bcga:Citation",
+      "rdfs:label": "Vitruvius, De architectura III.5.12",
+      "bcga:author": { "@id": "bcga:Vitruvius" },
+      "bcga:work": "De architectura",
+      "bcga:locator": "III.5.12",
+      "rdfs:comment": "Tympanum height as a fraction of the cornice span."
+    },
+    {
+      "@id": "bcga:Vitruvius-IV.1",
+      "@type": "bcga:Citation",
+      "rdfs:label": "Vitruvius, De architectura IV.1",
+      "bcga:author": { "@id": "bcga:Vitruvius" },
+      "bcga:work": "De architectura",
+      "bcga:locator": "IV.1",
+      "rdfs:comment": "The orders and their character."
+    },
+    {
+      "@id": "bcga:Vitruvius-IV.3",
+      "@type": "bcga:Citation",
+      "rdfs:label": "Vitruvius, De architectura IV.3.1-2",
+      "bcga:author": { "@id": "bcga:Vitruvius" },
+      "bcga:work": "De architectura",
+      "bcga:locator": "IV.3.1-2",
+      "rdfs:comment": "The Doric triglyph rule and the corner difficulty."
+    },
+    {
+      "@id": "bcga:Palladio-I.21",
+      "@type": "bcga:Citation",
+      "rdfs:label": "Palladio, I quattro libri I.21",
+      "bcga:author": { "@id": "bcga:Palladio" },
+      "bcga:work": "I quattro libri dell'architettura",
+      "bcga:locator": "I.21",
+      "rdfs:comment": "The seven most beautiful room shapes, and the three means for ceiling height."
+    },
+    {
+      "@id": "bcga:Palladio-II",
+      "@type": "bcga:Citation",
+      "rdfs:label": "Palladio, I quattro libri II",
+      "bcga:author": { "@id": "bcga:Palladio" },
+      "bcga:work": "I quattro libri dell'architettura",
+      "bcga:locator": "II",
+      "rdfs:comment": "The townhouses and villas: composition, podium, temple front, barchesse."
+    }
+  ]
+}

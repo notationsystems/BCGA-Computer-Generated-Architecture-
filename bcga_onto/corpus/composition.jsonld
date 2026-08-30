@@ -1,0 +1,112 @@
+{
+  "@context": {
+    "bcga": "https://notationsystems.github.io/bcga/ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "dcterms": "http://purl.org/dc/terms/"
+  },
+  "@graph": [
+    {
+      "@id": "bcga:Principle",
+      "@type": "rdfs:Class",
+      "rdfs:label": "Principle",
+      "rdfs:comment": "A constraint the canon imposes, used by the audit rather than by generation."
+    },
+
+    {
+      "@id": "bcga:firmitas",
+      "@type": "bcga:Principle",
+      "rdfs:label": "Firmitas",
+      "rdfs:comment": "Structural soundness. A design failing any one of the triad is not merely worse: it is not architecture.",
+      "dcterms:source": { "@id": "bcga:Vitruvius-I.3" }
+    },
+    {
+      "@id": "bcga:utilitas",
+      "@type": "bcga:Principle",
+      "rdfs:label": "Utilitas",
+      "rdfs:comment": "Fitness for use.",
+      "dcterms:source": { "@id": "bcga:Vitruvius-I.3" }
+    },
+    {
+      "@id": "bcga:venustas",
+      "@type": "bcga:Principle",
+      "rdfs:label": "Venustas",
+      "rdfs:comment": "Beauty.",
+      "dcterms:source": { "@id": "bcga:Vitruvius-I.3" }
+    },
+
+    {
+      "@id": "bcga:ordinatio",
+      "@type": "bcga:Principle",
+      "rdfs:label": "Ordinatio",
+      "rdfs:comment": "A module is chosen and every dimension is a stated multiple of it. If a dimension cannot be written in M, it has not yet been designed.",
+      "dcterms:source": { "@id": "bcga:Vitruvius-I.2" }
+    },
+    {
+      "@id": "bcga:dispositio",
+      "@type": "bcga:Principle",
+      "rdfs:label": "Dispositio",
+      "rdfs:comment": "The design exists in plan, elevation and view.",
+      "dcterms:source": { "@id": "bcga:Vitruvius-I.2" }
+    },
+    {
+      "@id": "bcga:eurythmia",
+      "@type": "bcga:Principle",
+      "rdfs:label": "Eurythmia",
+      "rdfs:comment": "Graceful appearance; the whole reads correctly to the eye. Eurythmia outranks arithmetic: never defend a bad-looking result with a correct number.",
+      "dcterms:source": { "@id": "bcga:Vitruvius-I.2" }
+    },
+    {
+      "@id": "bcga:symmetria",
+      "@type": "bcga:Principle",
+      "rdfs:label": "Symmetria",
+      "rdfs:comment": "Commensurability: parts relate to each other and to the whole through the module.",
+      "dcterms:source": { "@id": "bcga:Vitruvius-I.2" }
+    },
+    {
+      "@id": "bcga:decor",
+      "@type": "bcga:Principle",
+      "rdfs:label": "Decor",
+      "rdfs:comment": "Propriety: the form suits the subject, the custom and the site. Applying a florid order to a workshop violates decor even if every dimension is right.",
+      "dcterms:source": { "@id": "bcga:Vitruvius-I.2" }
+    },
+    {
+      "@id": "bcga:distributio",
+      "@type": "bcga:Principle",
+      "rdfs:label": "Distributio",
+      "rdfs:comment": "Economy of means and material, fitted to the client's station.",
+      "dcterms:source": { "@id": "bcga:Vitruvius-I.2" }
+    },
+
+    {
+      "@id": "bcga:Villa",
+      "@type": "rdfs:Class",
+      "rdfs:label": "Villa",
+      "rdfs:comment": "The Palladian villa type: a symmetric noble block on a podium, with a temple front and arcaded farm wings."
+    },
+    {
+      "@id": "bcga:palladianVilla",
+      "@type": "bcga:Villa",
+      "rdfs:label": "Palladian villa",
+      "bcga:defaultOrder": { "@id": "bcga:ionic" },
+      "bcga:defaultIntercolumniation": { "@id": "bcga:eustyle" },
+      "bcga:defaultCeilingRule": { "@id": "bcga:geometricMean" },
+      "bcga:composition": [
+        "One axis: the entrance, the hall and the far view lie on it, and everything is mirrored about it.",
+        "The piano nobile is raised on a podium, above damp and flood, reached by a broad shallow flight.",
+        "A temple front is applied to a house: the pedimented portico gives domestic life the dignity of the sacred.",
+        "Rooms diminish outward from the central sala, so the sequence is legible and the floor spans sensibly.",
+        "Service goes to the basement or the wings, never the noble block.",
+        "Barchesse: straight arcaded farm wings tie the working estate into one composition.",
+        "Enfilade: doors align through the suite so the eye travels the whole depth of the house.",
+        "Site on elevated ground, near running water, with a long approach."
+      ],
+      "bcga:elevation": [
+        "The portico entablature aligns with, or sits just under, the main cornice.",
+        "Window heights diminish upward: piano nobile tallest, attic shortest.",
+        "Rustication belongs to the base; smooth ashlar or stucco above.",
+        "The pediment is reserved for the principal face."
+      ],
+      "dcterms:source": { "@id": "bcga:Palladio-II" }
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "@context": {
+    "bcga": "https://notationsystems.github.io/bcga/ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "dcterms": "http://purl.org/dc/terms/"
+  },
+  "@graph": [
+    {
+      "@id": "bcga:RoomShape",
+      "@type": "rdfs:Class",
+      "rdfs:label": "Room shape",
+      "rdfs:comment": "Palladio permits exactly seven plan ratios. A room outside this set is undesigned. Ratios 4 to 7 are the musical consonances -- fourth, fifth, major sixth, octave -- because proportion is harmony made visible."
+    },
+
+    {
+      "@id": "bcga:circle",
+      "@type": "bcga:RoomShape",
+      "rdfs:label": "Circle",
+      "bcga:ratioWidth": 1, "bcga:ratioLength": 1,
+      "bcga:isRound": true,
+      "bcga:ordinal": 1,
+      "dcterms:source": { "@id": "bcga:Palladio-I.21" }
+    },
+    {
+      "@id": "bcga:square",
+      "@type": "bcga:RoomShape",
+      "rdfs:label": "Square",
+      "bcga:ratioWidth": 1, "bcga:ratioLength": 1,
+      "bcga:ordinal": 2,
+      "dcterms:source": { "@id": "bcga:Palladio-I.21" }
+    },
+    {
+      "@id": "bcga:squareAndDiagonal",
+      "@type": "bcga:RoomShape",
+      "rdfs:label": "Square and diagonal",
+      "bcga:ratioWidth": 1, "bcga:ratioLength": 1.4142135623730951,
+      "bcga:isIrrational": true,
+      "bcga:ordinal": 3,
+      "dcterms:source": { "@id": "bcga:Palladio-I.21" }
+    },
+    {
+      "@id": "bcga:squareAndAThird",
+      "@type": "bcga:RoomShape",
+      "rdfs:label": "Square and a third",
+      "bcga:ratioWidth": 3, "bcga:ratioLength": 4,
+      "bcga:consonance": "perfect fourth",
+      "bcga:ordinal": 4,
+      "dcterms:source": { "@id": "bcga:Palladio-I.21" }
+    },
+    {
+      "@id": "bcga:squareAndAHalf",
+      "@type": "bcga:RoomShape",
+      "rdfs:label": "Square and a half",
+      "bcga:ratioWidth": 2, "bcga:ratioLength": 3,
+      "bcga:consonance": "perfect fifth",
+      "bcga:ordinal": 5,
+      "dcterms:source": { "@id": "bcga:Palladio-I.21" }
+    },
+    {
+      "@id": "bcga:squareAndTwoThirds",
+      "@type": "bcga:RoomShape",
+      "rdfs:label": "Square and two thirds",
+      "bcga:ratioWidth": 3, "bcga:ratioLength": 5,
+      "bcga:consonance": "major sixth",
+      "bcga:ordinal": 6,
+      "dcterms:source": { "@id": "bcga:Palladio-I.21" }
+    },
+    {
+      "@id": "bcga:doubleSquare",
+      "@type": "bcga:RoomShape",
+      "rdfs:label": "Double square",
+      "bcga:ratioWidth": 1, "bcga:ratioLength": 2,
+      "bcga:consonance": "octave",
+      "bcga:ordinal": 7,
+      "dcterms:source": { "@id": "bcga:Palladio-I.21" }
+    },
+
+    {
+      "@id": "bcga:CeilingRule",
+      "@type": "rdfs:Class",
+      "rdfs:label": "Ceiling height rule",
+      "rdfs:comment": "For vaulted rooms the height is one of three means of length and width. Pick one per storey and hold it."
+    },
+    {
+      "@id": "bcga:arithmeticMean",
+      "@type": "bcga:CeilingRule",
+      "rdfs:label": "Arithmetic mean",
+      "bcga:formula": "(length + width) / 2",
+      "rdfs:comment": "The most generous of the three.",
+      "dcterms:source": { "@id": "bcga:Palladio-I.21" }
+    },
+    {
+      "@id": "bcga:geometricMean",
+      "@type": "bcga:CeilingRule",
+      "rdfs:label": "Geometric mean",
+      "bcga:formula": "sqrt(length * width)",
+      "rdfs:comment": "The most refined of the three.",
+      "dcterms:source": { "@id": "bcga:Palladio-I.21" }
+    },
+    {
+      "@id": "bcga:harmonicMean",
+      "@type": "bcga:CeilingRule",
+      "rdfs:label": "Harmonic mean",
+      "bcga:formula": "2 * length * width / (length + width)",
+      "rdfs:comment": "The most compressed of the three.",
+      "dcterms:source": { "@id": "bcga:Palladio-I.21" }
+    },
+    {
+      "@id": "bcga:flatCeiling",
+      "@type": "bcga:CeilingRule",
+      "rdfs:label": "Flat ceiling",
+      "bcga:formula": "width",
+      "rdfs:comment": "For flat-ceilinged rooms the height equals the width.",
+      "dcterms:source": { "@id": "bcga:Palladio-I.21" }
+    }
+  ]
+}

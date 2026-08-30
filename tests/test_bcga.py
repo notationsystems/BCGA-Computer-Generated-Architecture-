@@ -46,10 +46,10 @@ def stage():
     image.file_format = "PNG"
     image.save()
     sys.path.insert(0, os.path.join(tmp, "addons"))
-    return tmp, rules
+    return tmp, rules, package
 
 
-TMP, RULES = stage()
+TMP, RULES, PACKAGE = stage()
 
 import bcga
 import bpro
@@ -340,6 +340,49 @@ def t_bake_without_scripts():
     return "missing scripts cancel without leaving a duplicate"
 
 
+# ------------------------------------------------------- the knowledge layer
+
+def t_ontology_drives_the_rules():
+    """
+    The example rule set states no proportion of its own: it resolves them
+    from bcga_onto. So the built geometry is the check on that whole path --
+    corpus, resolver, grammar, bmesh -- landing where the canon says.
+    """
+    from bcga_onto import canon
+
+    width, depth, podium = 20.0, 12.0, 1.5
+    reset()
+    bpy.ops.object.footprint_set(width=width, depth=depth, lights=False)
+    proContext.blenderContext = bpy.context
+    bpro.apply(os.path.join(PACKAGE, "examples", "classical_front.py"))
+    obj = bpy.context.view_layer.objects.active
+
+    resolver = canon()
+    order = resolver.orderFor("houses")
+    module = resolver.moduleForSpan(width, 6, "eustyle")
+    courses = resolver.elevationBands(order, module=module, spacing="eustyle", podium=podium)
+
+    expected, running = [0.0], 0.0
+    for _, height in courses:
+        running += height
+        expected.append(running)
+
+    built = sorted({round(vertex.co.z, 4) for vertex in obj.data.vertices})
+    assert len(built) == len(expected), \
+        "expected %d course levels, the mesh has %d: %s" % (len(expected), len(built), built)
+    for wanted, got in zip(expected, built):
+        assert abs(wanted - got) < 1e-3, \
+            "course at %.4f but the canon puts it at %.4f (all: %s)" % (got, wanted, built)
+
+    xs = [vertex.co.x for vertex in obj.data.vertices]
+    assert abs((max(xs) - min(xs)) - width) < 1e-3, "the front is %.3f wide, not %.3f" % (
+        max(xs) - min(xs), width)
+    # 6 columns and 5 voids on each of the four faces, plus the courses and roof
+    assert len(obj.data.materials) == 7, [m.name for m in obj.data.materials]
+    return "%s chosen by decor, M=%.4f, %d courses at %s" % (
+        order, module, len(courses), ", ".join("%.3f" % level for level in built[1:]))
+
+
 def main():
     for name, function in [
         ("register add-on", t_register),
@@ -363,6 +406,7 @@ def main():
         ("a text datablock builds geometry", t_text_datablock_to_geometry),
         ("Bake writes the high poly colours", t_bake),
         ("Bake without scripts cancels", t_bake_without_scripts),
+        ("the ontology drives a rule set", t_ontology_drives_the_rules),
     ]:
         check(name, function)
 

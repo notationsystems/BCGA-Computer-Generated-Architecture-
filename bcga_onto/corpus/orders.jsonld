@@ -1,0 +1,194 @@
+{
+  "@context": {
+    "bcga": "https://notationsystems.github.io/bcga/ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "dcterms": "http://purl.org/dc/terms/"
+  },
+  "@graph": [
+    {
+      "@id": "bcga:Order",
+      "@type": "rdfs:Class",
+      "rdfs:label": "Order",
+      "rdfs:comment": "One of the five orders. Every dimension is stated in M, the diameter of the column at its base, so an order is a set of ratios rather than sizes."
+    },
+    {
+      "@id": "bcga:tuscan",
+      "@type": "bcga:Order",
+      "rdfs:label": "Tuscan",
+      "bcga:columnHeight": 7,
+      "bcga:entablatureRatio": 0.25,
+      "bcga:architraveShare": 0.3,
+      "bcga:friezeShare": 0.3,
+      "bcga:corniceShare": 0.4,
+      "bcga:flutes": 0,
+      "bcga:shaftDiminution": 0.8333333333333334,
+      "bcga:character": "Solid, unornamented, virile",
+      "bcga:suitedTo": [
+        "gates",
+        "baths",
+        "workshops",
+        "farm buildings",
+        "harbour works"
+      ],
+      "bcga:slendernessRank": 1,
+      "dcterms:source": [
+        {
+          "@id": "bcga:Vitruvius-IV.1"
+        },
+        {
+          "@id": "bcga:Vitruvius-I.2"
+        }
+      ]
+    },
+    {
+      "@id": "bcga:doric",
+      "@type": "bcga:Order",
+      "rdfs:label": "Doric",
+      "bcga:columnHeight": 8,
+      "bcga:entablatureRatio": 0.25,
+      "bcga:architraveShare": 0.3,
+      "bcga:friezeShare": 0.3,
+      "bcga:corniceShare": 0.4,
+      "bcga:flutes": 20,
+      "bcga:shaftDiminution": 0.8333333333333334,
+      "bcga:hasTriglyphFrieze": true,
+      "bcga:triglyphWidth": 0.5,
+      "bcga:metopeWidth": 0.75,
+      "bcga:character": "Solid, unornamented, virile",
+      "bcga:suitedTo": [
+        "gates",
+        "baths",
+        "workshops",
+        "farm buildings",
+        "harbour works"
+      ],
+      "bcga:slendernessRank": 2,
+      "dcterms:source": [
+        {
+          "@id": "bcga:Vitruvius-IV.1"
+        },
+        {
+          "@id": "bcga:Vitruvius-I.2"
+        },
+        {
+          "@id": "bcga:Vitruvius-IV.3"
+        }
+      ]
+    },
+    {
+      "@id": "bcga:ionic",
+      "@type": "bcga:Order",
+      "rdfs:label": "Ionic",
+      "bcga:columnHeight": 9,
+      "bcga:entablatureRatio": 0.2,
+      "bcga:architraveShare": 0.3,
+      "bcga:friezeShare": 0.3,
+      "bcga:corniceShare": 0.4,
+      "bcga:flutes": 24,
+      "bcga:shaftDiminution": 0.8333333333333334,
+      "bcga:character": "The mean between severe and delicate",
+      "bcga:suitedTo": [
+        "houses",
+        "libraries",
+        "courts"
+      ],
+      "bcga:slendernessRank": 3,
+      "dcterms:source": [
+        {
+          "@id": "bcga:Vitruvius-IV.1"
+        },
+        {
+          "@id": "bcga:Vitruvius-I.2"
+        }
+      ]
+    },
+    {
+      "@id": "bcga:corinthian",
+      "@type": "bcga:Order",
+      "rdfs:label": "Corinthian",
+      "bcga:columnHeight": 9.5,
+      "bcga:entablatureRatio": 0.2,
+      "bcga:architraveShare": 0.3,
+      "bcga:friezeShare": 0.3,
+      "bcga:corniceShare": 0.4,
+      "bcga:flutes": 24,
+      "bcga:shaftDiminution": 0.8333333333333334,
+      "bcga:character": "Slender, maidenly, florid",
+      "bcga:suitedTo": [
+        "garden pavilions",
+        "tombs",
+        "temples of the graces"
+      ],
+      "bcga:slendernessRank": 4,
+      "dcterms:source": [
+        {
+          "@id": "bcga:Vitruvius-IV.1"
+        },
+        {
+          "@id": "bcga:Vitruvius-I.2"
+        }
+      ]
+    },
+    {
+      "@id": "bcga:composite",
+      "@type": "bcga:Order",
+      "rdfs:label": "Composite",
+      "bcga:columnHeight": 10,
+      "bcga:entablatureRatio": 0.2,
+      "bcga:architraveShare": 0.3,
+      "bcga:friezeShare": 0.3,
+      "bcga:corniceShare": 0.4,
+      "bcga:flutes": 24,
+      "bcga:shaftDiminution": 0.8333333333333334,
+      "bcga:character": "Slender, maidenly, florid; volutes over acanthus",
+      "bcga:suitedTo": [
+        "garden pavilions",
+        "tombs",
+        "temples of the graces"
+      ],
+      "bcga:slendernessRank": 5,
+      "dcterms:source": [
+        {
+          "@id": "bcga:Vitruvius-IV.1"
+        },
+        {
+          "@id": "bcga:Vitruvius-I.2"
+        }
+      ]
+    },
+    {
+      "@id": "bcga:entablatureDivision",
+      "@type": "bcga:Rule",
+      "rdfs:label": "Entablature division",
+      "rdfs:comment": "The entablature divides into ten parts: architrave 3, frieze 3, cornice 4. Palladio varies this slightly by order; 3:3:4 is the safe default. The cornice projects roughly its own height.",
+      "dcterms:source": {
+        "@id": "bcga:Vitruvius-IV.1"
+      }
+    },
+    {
+      "@id": "bcga:pedimentPitch",
+      "@type": "bcga:Rule",
+      "rdfs:label": "Pediment",
+      "rdfs:comment": "Vitruvius sets the tympanum height at 1/9 of the cornice span for temples, a pitch near 12.5 degrees. Palladio's is steeper, near 22 to 27 degrees. NOTE ON THE SOURCE: the ratio is recorded here against the FULL span. The usual phrasing, '1/4 to 1/5 of the half-span', is inconsistent with the pitch quoted alongside it -- taken against the half-span it yields 12.7 degrees, not the stated ~22 -- whereas against the full span it yields 21.8 to 26.6 degrees, which matches. The checkable quantity, the pitch, is treated as authoritative over the ambiguous wording.",
+      "bcga:vitruvianTympanumRatio": 0.1111111111111111,
+      "dcterms:source": {
+        "@id": "bcga:Vitruvius-III.5"
+      },
+      "bcga:vitruvianPitchDegrees": 12.528807709151492,
+      "bcga:palladianSpanRatioMin": 0.2,
+      "bcga:palladianSpanRatioMax": 0.25,
+      "bcga:palladianPitchDegreesMin": 21.801409486351815,
+      "bcga:palladianPitchDegreesMax": 26.56505117707799
+    },
+    {
+      "@id": "bcga:cornerColumnThickening",
+      "@type": "bcga:Rule",
+      "rdfs:label": "Corner column thickening",
+      "rdfs:comment": "Corner columns are thickened by 1/50 of their diameter, because outdoor light erodes their silhouette. Eurythmia outranks arithmetic: the architect counteracts the deception of the eye by calculation.",
+      "bcga:factor": 0.02,
+      "dcterms:source": {
+        "@id": "bcga:Vitruvius-III.3"
+      }
+    }
+  ]
+}
