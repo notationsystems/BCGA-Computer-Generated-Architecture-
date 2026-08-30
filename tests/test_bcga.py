@@ -383,6 +383,38 @@ def t_ontology_drives_the_rules():
         order, module, len(courses), ", ".join("%.3f" % level for level in built[1:]))
 
 
+def t_colour_is_linearised():
+    """
+    color("#553322") must render as #553322.
+
+    Rule sets write sRGB hex, but Material.diffuse_color is linear, so the
+    value has to be converted on the way in. Assigning sRGB straight into it
+    renders every colour far too light: #553322 came out #9c7c66.
+    """
+    from bpro.op_color import srgbToLinear
+
+    reset()
+    bpy.ops.object.footprint_set(size="20x10")
+    proContext.blenderContext = bpy.context
+    bpro.apply(ruleFile("simple.py"))
+    obj = bpy.context.view_layer.objects.active
+    checked = 0
+    for material in obj.data.materials:
+        if material is None or not material.name.startswith("#"):
+            continue
+        wanted = [srgbToLinear(component / 255)
+                  for component in bytes.fromhex(material.name[-6:])]
+        got = list(material.diffuse_color)[:3]
+        for expected, actual in zip(wanted, got):
+            assert abs(expected - actual) < 1e-6, \
+                "%s is %s, expected the linear %s" % (material.name, got, wanted)
+        assert abs(material.diffuse_color[3] - 1.0) < 1e-6, \
+            "alpha is %r, expected 1.0" % material.diffuse_color[3]
+        checked += 1
+    assert checked, "no colour materials to check"
+    return "%d colour materials hold the linear value of their hex" % checked
+
+
 def main():
     for name, function in [
         ("register add-on", t_register),
@@ -407,6 +439,7 @@ def main():
         ("Bake writes the high poly colours", t_bake),
         ("Bake without scripts cancels", t_bake_without_scripts),
         ("the ontology drives a rule set", t_ontology_drives_the_rules),
+        ("colours are linearised for render", t_colour_is_linearised),
     ]:
         check(name, function)
 
