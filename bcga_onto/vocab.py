@@ -5,8 +5,8 @@ Terms are IRIs so the corpus is real linked data: it can be handed to rdflib,
 queried with SPARQL and aligned with other vocabularies. Nothing here depends
 on rdflib or on Blender.
 
-Change BCGA below if the project takes a different namespace; every term is
-derived from it, and the corpus files declare it in their @context.
+Every term derives from NS_ROOT, the one namespace root shared by all Notation
+Systems apparatuses; the corpus files declare the same prefixes in @context.
 """
 
 
@@ -47,12 +47,17 @@ class Namespace:
         return iri
 
 
-BCGA = Namespace("bcga", "https://notationsystems.github.io/bcga/ns#")
+# One root for the whole ecosystem, so two apparatuses can be loaded into the
+# same graph without collision and aligned to each other by ordinary IRI.
+NS_ROOT = "https://notationsystems.github.io/ns/"
+
+NOTATION = Namespace("ns", NS_ROOT + "notation#")
+BCGA = Namespace("bcga", NS_ROOT + "bcga#")
 RDFS = Namespace("rdfs", "http://www.w3.org/2000/01/rdf-schema#")
 RDF = Namespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#")
 DCTERMS = Namespace("dcterms", "http://purl.org/dc/terms/")
 
-NAMESPACES = {ns.prefix: ns for ns in (BCGA, RDFS, RDF, DCTERMS)}
+NAMESPACES = {ns.prefix: ns for ns in (NOTATION, BCGA, RDFS, RDF, DCTERMS)}
 
 # the handful of terms the resolver and the audit rely on by name
 TYPE = RDF.type

@@ -1,6 +1,6 @@
 {
   "@context": {
-    "bcga": "https://notationsystems.github.io/bcga/ns#",
+    "bcga": "https://notationsystems.github.io/ns/bcga#",
     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
     "dcterms": "http://purl.org/dc/terms/"
   },

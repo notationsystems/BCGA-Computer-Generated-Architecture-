@@ -32,8 +32,14 @@ jobs:
         if: matrix.rdflib == 'with'
         run: python -m pip install rdflib
 
+      - name: Run the conformance clauses
+        run: python tests/test_notation.py
+
       - name: Run the knowledge layer tests
         run: python tests/test_onto.py
+
+      - name: Report corpus conformance
+        run: python -m notation bcga_onto
 
   blender:
     runs-on: ubuntu-latest

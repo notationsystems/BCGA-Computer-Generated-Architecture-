@@ -252,7 +252,7 @@ def t_jsonld_roundtrip():
 def t_turtle_output():
     turtle = loadCorpus().toTurtle()
     assert "@prefix bcga:" in turtle, "no prefixes emitted"
-    assert "<https://notationsystems.github.io/bcga/ns#ionic>" in turtle, "ionic missing"
+    assert "<https://notationsystems.github.io/ns/bcga#ionic>" in turtle, "ionic missing"
     return "%d lines of Turtle" % len(turtle.splitlines())
 
 
@@ -274,7 +274,7 @@ def t_rdflib_bridge():
         return "SKIPPED: rdflib not installed (the corpus works without it)"
     graph = loadCorpus().toRDFLib()
     rows = list(graph.query("""
-        PREFIX bcga: <https://notationsystems.github.io/bcga/ns#>
+        PREFIX bcga: <https://notationsystems.github.io/ns/bcga#>
         SELECT ?label WHERE { ?o a bcga:Order ; bcga:columnHeight 9 ;
                               <http://www.w3.org/2000/01/rdf-schema#label> ?label }"""))
     assert [str(row[0]) for row in rows] == ["Ionic"], rows

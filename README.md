@@ -1,5 +1,9 @@
 ### BCGA (Computer Generated Architecture for Blender)
 
+*A Notation Systems apparatus. Its corpus is checked against the clauses in
+[NOTATION.md](NOTATION.md) on every run: `python3 -m notation bcga_onto`.*
+
+
 BCGA is a procedural and iterative approach to generate architectural 3D models. A set of small Python functions called rules is used to generate 3D models of buildings. Each subsequent rule refines the model and adds additional details. The concept of BCGA was inspired by CGA shape grammar developed in ETH Zurich.
 
 Here is a brief description of the 3D model generation process on a simple example. The process starts from a 2D building outline. Its extrusion is created with the desired height. The extruded 3D shape is decomposed into a number of vertical rectangles corresponding to building facades and the upper polygon used as the base for the building roof. Floors are cut for each facade. Each floor is cut into sections with windows. Each section can be refined further.
@@ -85,9 +89,29 @@ satisfied: fix the bay, not the frieze
   taken. Where the sources disagree with themselves, the corpus says so rather
   than quietly picking.
 
+### Conformance
+
+The corpus is an apparatus in the sense set out in [NOTATION.md](NOTATION.md),
+and reports its own standing rather than asserting it:
+
+```
+$ python3 -m notation bcga_onto
+C1  HOLDS          Attribution   all 39 instances carry a source
+C2  NOT APPLICABLE Separation    the corpus declares no evidence kinds
+C3  NOT APPLICABLE Warrant       the corpus asserts no measurements
+C4  HOLDS          Refusal       a single-valued read over conflicts raises
+C5  NOT APPLICABLE Attestation   nothing here is presented as an observation
+C6  NOT APPLICABLE Temporality   the corpus holds no evidence
+```
+
+Four abstentions, not four passes. The corpus is doctrine — it records what
+the treatises state — and the clauses that govern observation decline to
+comment rather than quietly succeeding.
+
 ### Tests
 
 ```
+python3 tests/test_notation.py # the conformance clauses, no Blender needed
 python3 tests/test_onto.py     # the knowledge layer, no Blender needed
 python3 tests/test_bcga.py     # the add-on, needs `pip install bpy==4.2.0`
 ```

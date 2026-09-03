@@ -19,14 +19,48 @@ cannot install packages. rdflib is used only if it happens to be present.
     text, ok = Audit.report(Audit().templeFront(front))
 """
 
+from notation import Manifest
+
 from .audit import Audit, Finding
 from .graph import Graph, loadCorpus
 from .resolve import Canon, canon
-from .vocab import BCGA, IRI, Namespace
+from .vocab import BCGA, DCTERMS, IRI, Namespace
+
+
+def MANIFEST():
+    """
+    How this apparatus binds the Notation Systems clauses.
+
+    BCGA's corpus is entirely doctrinal: it records what Vitruvius and Palladio
+    state, with citations, and asserts nothing about any particular building.
+    So the evidence, measurement, attestation and temporality clauses report
+    NOT APPLICABLE rather than passing -- which is the honest reading, and the
+    exact gap the precedent corpus is meant to close.
+    """
+    return Manifest(
+        name="BCGA -- the architectural canon",
+        graph=loadCorpus(),
+        sourceProperty=DCTERMS.source,
+        instanceKinds=(
+            BCGA.Order, BCGA.Intercolumniation, BCGA.RoomShape,
+            BCGA.CeilingRule, BCGA.Principle, BCGA.Portico, BCGA.Rule, BCGA.Villa,
+        ),
+        doctrineKinds=(
+            BCGA.Order, BCGA.Intercolumniation, BCGA.RoomShape,
+            BCGA.CeilingRule, BCGA.Principle, BCGA.Rule,
+        ),
+        # no precedent corpus yet, so nothing here is an observation
+        evidenceKinds=(),
+        measurementKinds=(),
+        singleValued=(BCGA.columnHeight,),
+        emptyGraph=Graph,
+    )
+
 
 __all__ = [
     "Audit", "Finding",
     "Graph", "loadCorpus",
     "Canon", "canon",
+    "MANIFEST",
     "BCGA", "IRI", "Namespace",
 ]
